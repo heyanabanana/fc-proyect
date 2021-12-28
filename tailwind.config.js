@@ -5,9 +5,6 @@ module.exports = {
   darkMode: "class",
   theme: {
     extend: {
-      backgroundImage: {
-        login: "url('/src/assets/images/login-image.jpg')",
-      },
       spacing: {
         "9/16": "56.25%",
       },

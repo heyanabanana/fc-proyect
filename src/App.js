@@ -1,6 +1,7 @@
 import React from "react";
 import { Route } from "wouter";
 import Login from "./pages/Login";
+import UserDashboard from "./pages/UserDashboard";
 
 // CSS styles
 import "./styles/App.css";
@@ -12,6 +13,7 @@ const App = () => {
   return (
     <div className="App">
       <Route path="/" component={Login} />
+      <Route path="/dashboard" component={UserDashboard} />
     </div>
   );
 };
