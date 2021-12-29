@@ -1,5 +1,11 @@
 import React from "react";
-import Table from "./pure/Table";
+import Table, {
+  TagPill,
+  SelectFilter,
+  RemoteFilter,
+  MobilityFilter,
+  TagFilter
+} from "./pure/Table";
 
 const getData = () => [
   {
@@ -7,6 +13,8 @@ const getData = () => [
     city: "Valencia",
     country: "España",
     phone: "689254865",
+    remote: false,
+    mobility: true,
     email: "smonteagudo@gmail.com",
     skills: [
       {
@@ -24,6 +32,8 @@ const getData = () => [
     city: "Sevilla",
     country: "España",
     phone: "689254865",
+    remote: true,
+    mobility: false,
     email: "hcliment@gmail.com",
     skills: [
       {
@@ -45,6 +55,8 @@ const getData = () => [
     city: "Valencia",
     country: "España",
     phone: "925658765",
+    remote: false,
+    mobility: true,
     email: "glozano@gmail.com",
     skills: [
       {
@@ -62,6 +74,8 @@ const getData = () => [
     city: "Oviedo",
     country: "España",
     phone: "697829565",
+    remote: true,
+    mobility: false,
     email: "yguerrero@gmail.com",
     skills: [
       {
@@ -79,6 +93,8 @@ const getData = () => [
     city: "Valencia",
     country: "España",
     phone: "689254865",
+    remote: false,
+    mobility: true,
     email: "smonteagudo@gmail.com",
     skills: [
       {
@@ -89,6 +105,14 @@ const getData = () => [
         id: 2,
         name: "ANGULAR",
       },
+      {
+        id: 3,
+        name: "JAVA",
+      },
+      {
+        id: 4,
+        name: "SPRINGBOOT",
+      },
     ],
   },
   {
@@ -96,6 +120,8 @@ const getData = () => [
     city: "Sevilla",
     country: "España",
     phone: "689254865",
+    remote: true,
+    mobility: false,
     email: "hcliment@gmail.com",
     skills: [
       {
@@ -117,6 +143,8 @@ const getData = () => [
     city: "Valencia",
     country: "España",
     phone: "925658765",
+    remote: false,
+    mobility: true,
     email: "glozano@gmail.com",
     skills: [
       {
@@ -134,6 +162,8 @@ const getData = () => [
     city: "Oviedo",
     country: "España",
     phone: "697829565",
+    remote: true,
+    mobility: false,
     email: "yguerrero@gmail.com",
     skills: [
       {
@@ -158,10 +188,12 @@ const Candidatetable = () => {
       {
         Header: "Ciudad",
         accessor: "city",
+        Filter: SelectFilter,
       },
       {
         Header: "País",
         accessor: "country",
+        Filter: SelectFilter,
       },
       {
         Header: "Teléfono",
@@ -172,18 +204,27 @@ const Candidatetable = () => {
         accessor: "email",
       },
       {
+        accessor: "remote",
+        Filter: RemoteFilter,
+      },
+      {
+        accessor: "mobility",
+        Filter: MobilityFilter,
+      },
+      {
         Header: "Etiquetas",
-        accessor: "skills.name",
+        id: "skills",
+        accessor: (data) => data.skills.map((skill) => skill.name),
+        Cell: TagPill,
+        Filter: TagFilter,
       },
     ],
     []
   );
 
   const data = React.useMemo(() => getData(), []);
-  console.log(getData);
   return (
     <>
-      <h1>Hello React!</h1>
       <div>
         <Table columns={columns} data={data} />
       </div>
