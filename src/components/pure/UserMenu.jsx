@@ -23,7 +23,7 @@ const Usermenu = () => {
   return (
     <div>
       <Menu model={items} popup ref={menu} id="popup_menu" />
-      <span className="overflow-hidden flex items-center w-fit rounded-full bg-white m-0 p-0 mb-5">
+      <span className="overflow-hidden flex items-center w-fit rounded-full bg-white m-0 p-0 mb-5 pr-3">
         <Avatar
           image="https://ichef.bbci.co.uk/news/640/cpsprodpb/150EA/production/_107005268_gettyimages-611696954.jpg"
           size="large"
@@ -47,6 +47,7 @@ const Usermenu = () => {
             margin: "0px",
             padding: "0px",
             border: "none",
+            width: "fit-content",
           }}
         />
       </span>

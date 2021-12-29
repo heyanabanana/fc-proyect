@@ -1,6 +1,7 @@
 import React from "react";
 import Usermenu from "../components/pure/UserMenu";
 import Title from "../components/pure/Title";
+import Candidatetable from "../components/CandidateTable";
 
 const Userdashboard = () => {
   return (
@@ -9,6 +10,7 @@ const Userdashboard = () => {
         <Title />
         <Usermenu />
       </span>
+      <Candidatetable />
     </div>
   );
 };
