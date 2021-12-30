@@ -24,6 +24,7 @@ module.exports = {
           light: "#F8F8F9",
           medium: "#E6E6EA",
           dark: "#A5A8B3",
+          placeholder: "#8C909C",
         },
         primary: "#32D4A4",
       },

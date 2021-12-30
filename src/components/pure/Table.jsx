@@ -1,17 +1,15 @@
-import React, { useMemo, useState, useCallback } from "react";
-import DataList from "react-datalist-field/build";
-import Select from "react-select";
-import { candidatesData } from "../../services/candidatesData";
+import React from "react";
 import { skillsData } from "../../services/skillsData";
-
 import {
   useTable,
   useGlobalFilter,
   useAsyncDebounce,
   useSortBy,
   useFilters,
+  usePagination,
 } from "react-table";
-import { ReactComponent as IconSort } from "../../assets/icons/IconHover.svg";
+import { ReactComponent as IconSort } from "../../assets/icons/Filter.svg";
+import { ReactComponent as IconSearch } from "../../assets/icons/Search.svg";
 
 export function TagPill({ value }) {
   return (
@@ -38,6 +36,13 @@ export function TagPill({ value }) {
   );
 }
 
+export function FullName({ value }) {
+  return <p className="font-semibold">{value}</p>;
+}
+export function dontShow({ value }) {
+  return <div className="hidden">{value}</div>;
+}
+
 //BUSQUEDA GLOBAL
 function GlobalFilter({
   preGlobalFilteredRows,
@@ -50,7 +55,10 @@ function GlobalFilter({
   }, 200);
 
   return (
-    <span>
+    <span className="flex items-center min-w-content bg-gray-medium p-2 text-xs rounded-lg focus:outline-primary border-none ">
+      <span className="mr-3 ml-1 text-pink">
+        <IconSearch className="w-5 " />
+      </span>
       <input
         value={value || ""}
         onChange={(e) => {
@@ -58,6 +66,7 @@ function GlobalFilter({
           onChange(e.target.value);
         }}
         placeholder={"Buscar por Nombre, Email o Palabra clave..."}
+        className="placeholder:text-placeholder w-72 bg-gray-medium text-sm rounded-lg focus:outline-none border-none "
       />
     </span>
   );
@@ -67,29 +76,59 @@ function GlobalFilter({
 export function TagFilter({
   column: { filterValue, setFilter, preFilteredRows, id },
 }) {
-  const selectedSkills = ["REACT", "HTML&CSS"];
+  const [selectedSkills, setSelectedSkills] = React.useState([]);
+
+  const deleteSkill = (i) => {
+    const index = selectedSkills.indexOf(i);
+    if (index > -1) {
+      selectedSkills.splice(index, 1);
+    }
+    setSelectedSkills(selectedSkills);
+    setFilter(selectedSkills);
+  };
+
+  const onChange = (event) => {
+    const skills = skillsData.map((item) => item.name);
+    if (skills.includes(event.target.value)) {
+      if (selectedSkills.includes(event.target.value) === false) {
+        setSelectedSkills((selectedSkills) => [
+          ...selectedSkills,
+          event.target.value || undefined,
+        ]);
+        setFilter((filterValue) => [
+          ...filterValue,
+          event.target.value || undefined,
+        ]);
+      }
+    }
+  };
+
   return (
     <>
       {" "}
       <input
-        // value={filterValue}
         type="input"
-        list="gameList"
-        onChange={(e) => {
-          // setFilter(e.target.value, "id" || undefined);
-          selectedSkills.push(e.target.value, "id" || undefined);
-        }}
+        list="skillfilter"
+        onChange={onChange}
         placeholder="Select an option"
         multiple
       />
-      <datalist id="gameList" multiple>
+      <datalist id="skillfilter" multiple>
         {skillsData.map((item) => (
           <option key={item.id} value={item.name} />
         ))}
       </datalist>
       <span>
-        {selectedSkills.map((skill) => (
-          <span className="m-1 bg-gray-medium">{skill}</span>
+        {selectedSkills.map((skill, i) => (
+          <button
+            key={skill}
+            onClick={() => {
+              deleteSkill(skill);
+            }}
+          >
+            <span className="m-1 bg-gray-medium">{skill}</span>{" "}
+            <button className="m-1 text-red">X</button>
+          </button>
         ))}
       </span>
     </>
@@ -214,70 +253,132 @@ export function MobilityFilter({
 const Table = ({ columns, data }) => {
   const {
     getTableProps,
-    state,
+    state: { pageIndex, pageSize },
     preGlobalFilteredRows,
     setGlobalFilter,
     getTableBodyProps,
     headerGroups,
-    rows,
     prepareRow,
+    page,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
   } = useTable(
     {
       columns,
       data,
+      initialState: {
+        pageIndex: 0,
+      },
     },
     useGlobalFilter,
     useFilters,
-    useSortBy
+    useSortBy,
+    usePagination
   );
 
   return (
-    <>
+    <span className="w-full">
       {" "}
-      <span className="flex">
-        <h1>Alumnos</h1>
-
+      <span className="flex mb-3 items-center align-left">
+        <h1 className="font-semibold mr-6">Alumnos</h1>
         <GlobalFilter
           preGlobalFilteredRows={preGlobalFilteredRows}
-          globalFilter={state.globalFilter}
+          globalFilter={pageIndex.globalFilter}
           setGlobalFilter={setGlobalFilter}
         />
       </span>
-      <span className="flex">
-        <table {...getTableProps()} border="1" className="overflow-x-scroll">
-          <thead className="w-full">
-            {headerGroups.map((headerGroup) => (
-              <tr
-                {...headerGroup.getHeaderGroupProps()}
-                className="items-center"
-              >
-                {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                    <span className="flex items-center">
-                      {column.render("Header")}
-
-                      <IconSort />
-                    </span>
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                    );
-                  })}
+      <span className="flex w-full items-between">
+        <span className="bg-white overflow-hidden border border-gray-medium sm:rounded-xl">
+          <table
+            className="min-w-full divide-y divide-gray-medium"
+            {...getTableProps()}
+          >
+            <thead className="w-full">
+              {headerGroups.map((headerGroup) => (
+                <tr
+                  {...headerGroup.getHeaderGroupProps()}
+                  className="items-center"
+                >
+                  {headerGroup.headers.map((column) => (
+                    <th
+                      className="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wider"
+                      {...column.getHeaderProps(column.getSortByToggleProps())}
+                    >
+                      <span className="flex items-center">
+                        {column.render("Header")}
+                        {column.isSortable ? <IconSort /> : ""}
+                      </span>
+                    </th>
+                  ))}
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              ))}
+            </thead>
+            <tbody
+              {...getTableBodyProps()}
+              className="bg-white divide-y divide-gray-200 text-sm"
+            >
+              {page.map((row, i) => {
+                prepareRow(row);
+                return (
+                  <tr {...row.getRowProps()}>
+                    {row.cells.map((cell) => {
+                      return (
+                        <td
+                          {...cell.getCellProps()}
+                          className="px-4 py-3 whitespace-nowrap"
+                        >
+                          {cell.render("Cell")}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          <div className="pagination">
+            <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+              {"<<"}
+            </button>
+            <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+              {"<"}
+            </button>
+            <button onClick={() => nextPage()} disabled={!canNextPage}>
+              {">"}
+            </button>
+            <button
+              onClick={() => gotoPage(pageCount - 1)}
+              disabled={!canNextPage}
+            >
+              {">>"}
+            </button>
+            <span>
+              Page
+              <strong>
+                {pageIndex + 1} of {pageOptions.length}
+              </strong>{" "}
+            </span>
+
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+              }}
+            >
+              {[5, 10, 20].map((pageSize) => (
+                <option key={pageSize} value={pageSize}>
+                  Show {pageSize}
+                </option>
+              ))}
+            </select>
+          </div>
+        </span>
         <span className="ml-5">
           {headerGroups.map((headerGroup) =>
             headerGroup.headers.map((column) =>
@@ -289,12 +390,9 @@ const Table = ({ columns, data }) => {
               ) : null
             )
           )}
-          <pre>
-            <code>{JSON.stringify(state, null, 2)}</code>
-          </pre>
         </span>
       </span>
-    </>
+    </span>
   );
 };
 
