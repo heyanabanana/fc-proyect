@@ -1,4 +1,4 @@
-const getData = () => [
+export const candidatesData = [
   {
     fullname: "Álvaro Sánchez Monteagudo",
     city: "Valencia",
@@ -168,5 +168,3 @@ const getData = () => [
     ],
   },
 ];
-
-export default getData;

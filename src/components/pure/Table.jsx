@@ -1,5 +1,8 @@
 import React, { useMemo, useState, useCallback } from "react";
 import DataList from "react-datalist-field/build";
+import Select from "react-select";
+import { candidatesData } from "../../services/candidatesData";
+import { skillsData } from "../../services/skillsData";
 
 import {
   useTable,
@@ -60,65 +63,35 @@ function GlobalFilter({
   );
 }
 
-//TAG FILTER
+// TAG FILTER
 export function TagFilter({
   column: { filterValue, setFilter, preFilteredRows, id },
 }) {
-  const options = useMemo(() => {
-    const options = new Set();
-    preFilteredRows.forEach((row, i) => {
-      options.add(row.values[id], [i]);
-    });
-    return [...options.values()];
-  }, [id, preFilteredRows]);
-
-  const strg = options.toString();
-  const optionsArray = strg.split(",");
-  const eliminaDuplicados = (arr) => {
-    const unicos = [];
-
-    for (var i = 0; i < arr.length; i++) {
-      const elemento = arr[i];
-
-      if (!unicos.includes(arr[i])) {
-        unicos.push(elemento);
-      }
-    }
-
-    return unicos;
-  };
-
-  const filterOptions = eliminaDuplicados(optionsArray);
-
-  const EMPTY_INPUT = "";
-  const [selectedOption, setSelectedOption] = useState([]);
-  const [value, setValue] = useState(EMPTY_INPUT);
-  const onFocusClear = () => {
-    setValue(EMPTY_INPUT);
-  };
-
-  const onChange = (e) => {
-    const val = e.target.value;
-    setSelectedOption([val]);
-  };
-  console.log(selectedOption);
-
+  const selectedSkills = ["REACT", "HTML&CSS"];
   return (
     <>
+      {" "}
       <input
-        value={value}
+        // value={filterValue}
         type="input"
         list="gameList"
-        onChange={onChange}
-        onFocus={onFocusClear}
+        onChange={(e) => {
+          // setFilter(e.target.value, "id" || undefined);
+          selectedSkills.push(e.target.value, "id" || undefined);
+        }}
         placeholder="Select an option"
         multiple
       />
-      <datalist id="gameList">
-        {filterOptions.map((item) => (
-          <option key={item} value={item} />
+      <datalist id="gameList" multiple>
+        {skillsData.map((item) => (
+          <option key={item.id} value={item.name} />
         ))}
       </datalist>
+      <span>
+        {selectedSkills.map((skill) => (
+          <span className="m-1 bg-gray-medium">{skill}</span>
+        ))}
+      </span>
     </>
   );
 }
@@ -142,7 +115,7 @@ export function SelectFilter({
       id={id}
       value={filterValue}
       onChange={(e) => {
-        setFilter(e.target.value || undefined);
+        setFilter(e);
       }}
     >
       <option value="">Todos</option>

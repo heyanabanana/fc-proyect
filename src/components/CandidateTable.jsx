@@ -6,7 +6,7 @@ import Table, {
   MobilityFilter,
   TagFilter,
 } from "./pure/Table";
-import getData from "../services/getData";
+import { candidatesData } from "../services/candidatesData";
 
 const Candidatetable = () => {
   const columns = React.useMemo(
@@ -52,7 +52,7 @@ const Candidatetable = () => {
     []
   );
 
-  const data = React.useMemo(() => getData(), []);
+  const data = React.useMemo(() => candidatesData, []);
   return (
     <>
       <div>

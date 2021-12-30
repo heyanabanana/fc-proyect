@@ -11,7 +11,8 @@ const Userdashboard = () => {
         <Usermenu />
       </span>
       <span className="flex justify-center items-center mt-5">
-      <Candidatetable /></span>
+        <Candidatetable />
+      </span>
     </div>
   );
 };
