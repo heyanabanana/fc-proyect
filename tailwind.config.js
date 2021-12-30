@@ -162,6 +162,5 @@ module.exports = {
     typography: ["dark", "dark-hover"],
     fill: ["hover", "focus", "dark"],
   },
-  plugins: [    require('@tailwindcss/forms'),
-],
+  plugins: [require("@tailwindcss/forms"), require("autoprefixer")],
 };

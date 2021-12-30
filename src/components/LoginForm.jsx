@@ -17,7 +17,7 @@ const Loginform = () => {
       <input
         type="text"
         {...register("email", { required: true })}
-        className="m-1 bg-gray-light p-3 rounded-lg focus:outline-primary"
+        className="m-1 bg-gray-light p-3 rounded-lg focus:outline-primary border-none "
         placeholder="Introduce tu correo"
       />
       {errors.email && <span className="text-red">El email es necesario</span>}
@@ -28,7 +28,7 @@ const Loginform = () => {
       <input
         type="password"
         {...register("password", { required: true })}
-        className="m-1 bg-gray-light p-3 rounded-lg focus:outline-primary"
+        className="m-1 bg-gray-light p-3 rounded-lg focus:outline-primary  border-none"
         placeholder="Introduce tu contraseña"
       />
       {errors.password && (

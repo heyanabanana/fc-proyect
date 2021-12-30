@@ -1,4 +1,6 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
+import DataList from "react-datalist-field/build";
+
 import {
   useTable,
   useGlobalFilter,
@@ -6,7 +8,6 @@ import {
   useSortBy,
   useFilters,
 } from "react-table";
-import { MultiSelect } from 'primereact/multiselect';
 import { ReactComponent as IconSort } from "../../assets/icons/IconHover.svg";
 
 export function TagPill({ value }) {
@@ -14,7 +15,7 @@ export function TagPill({ value }) {
     <span className="flex w-auto flex-wrap">
       {value.slice(0, 2).map((skill) => (
         <span
-          key={skill.id}
+          key={skill}
           className="w-auto px-2 py-1 m-1 uppercase leading-wide font-semibold text-xs rounded-md  bg-primary text-white"
         >
           {skill}
@@ -59,40 +60,70 @@ function GlobalFilter({
   );
 }
 
-//FILTER SELECT
-
-const selectedCountriesTemplate = (option) => {
-  if (option) {
-      return (
-          <div className="country-item country-item-value">
-              <div>{option.name}</div>
-          </div>
-      );
-  }
-  return "Select Countries";
-}
+//TAG FILTER
 export function TagFilter({
   column: { filterValue, setFilter, preFilteredRows, id },
 }) {
-  const [selectedCountries, setSelectedCountries] = useState(null);
-
-  const options = React.useMemo(() => {
+  const options = useMemo(() => {
     const options = new Set();
-    preFilteredRows.forEach((row) => {
-      options.add(row.skills.values[id]);
+    preFilteredRows.forEach((row, i) => {
+      options.add(row.values[id], [i]);
     });
     return [...options.values()];
   }, [id, preFilteredRows]);
 
-  // Render a multi-select box
-  return (
-    <MultiSelect value={id} options={options.name} onChange={(e) => setSelectedCountries(e.value)} optionLabel="name" placeholder="Select Countries" filter className="multiselect-custom"
-        selectedItemTemplate={selectedCountriesTemplate}  />
+  const strg = options.toString();
+  const optionsArray = strg.split(",");
+  const eliminaDuplicados = (arr) => {
+    const unicos = [];
 
+    for (var i = 0; i < arr.length; i++) {
+      const elemento = arr[i];
+
+      if (!unicos.includes(arr[i])) {
+        unicos.push(elemento);
+      }
+    }
+
+    return unicos;
+  };
+
+  const filterOptions = eliminaDuplicados(optionsArray);
+
+  const EMPTY_INPUT = "";
+  const [selectedOption, setSelectedOption] = useState([]);
+  const [value, setValue] = useState(EMPTY_INPUT);
+  const onFocusClear = () => {
+    setValue(EMPTY_INPUT);
+  };
+
+  const onChange = (e) => {
+    const val = e.target.value;
+    setSelectedOption([val]);
+  };
+  console.log(selectedOption);
+
+  return (
+    <>
+      <input
+        value={value}
+        type="input"
+        list="gameList"
+        onChange={onChange}
+        onFocus={onFocusClear}
+        placeholder="Select an option"
+        multiple
+      />
+      <datalist id="gameList">
+        {filterOptions.map((item) => (
+          <option key={item} value={item} />
+        ))}
+      </datalist>
+    </>
   );
 }
 
-//TAGS FILTERS
+//SELECT FILTERS
 export function SelectFilter({
   column: { filterValue, setFilter, preFilteredRows, id },
 }) {
@@ -124,8 +155,6 @@ export function SelectFilter({
   );
 }
 function setFilteredParams(filterArr, val) {
-  console.log(filterArr);
-  console.log(val);
   // if (val === undefined) return undefined;
   if (filterArr.includes(val)) {
     filterArr = filterArr.filter((n) => {
@@ -141,7 +170,6 @@ function setFilteredParams(filterArr, val) {
 export function RemoteFilter({
   column: { filterValue = [], setFilter, preFilteredRows, id },
 }) {
-  
   return (
     <div className="flex flex-col">
       <span className="block capitalize mb-4">{id}</span>
@@ -177,7 +205,6 @@ export function RemoteFilter({
 export function MobilityFilter({
   column: { filterValue = [], setFilter, preFilteredRows, id },
 }) {
-  
   return (
     <div className="flex flex-col">
       <span className="block capitalize mb-4">{id}</span>
@@ -232,7 +259,8 @@ const Table = ({ columns, data }) => {
   );
 
   return (
-    <span>
+    <>
+      {" "}
       <span className="flex">
         <h1>Alumnos</h1>
 
@@ -242,53 +270,58 @@ const Table = ({ columns, data }) => {
           setGlobalFilter={setGlobalFilter}
         />
       </span>
-      <table {...getTableProps()} border="1" className="overflow-x-scroll">
-        <thead className="w-full">
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()} className="items-center">
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                  <span className="flex items-center">
-                    {column.render("Header")}
+      <span className="flex">
+        <table {...getTableProps()} border="1" className="overflow-x-scroll">
+          <thead className="w-full">
+            {headerGroups.map((headerGroup) => (
+              <tr
+                {...headerGroup.getHeaderGroupProps()}
+                className="items-center"
+              >
+                {headerGroup.headers.map((column) => (
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    <span className="flex items-center">
+                      {column.render("Header")}
 
-                    <IconSort />
-                  </span>
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {rows.map((row, i) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-                  return (
-                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                  );
-                })}
+                      <IconSort />
+                    </span>
+                  </th>
+                ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <span>
-        {headerGroups.map((headerGroup) =>
-          headerGroup.headers.map((column) =>
-            column.Filter ? (
-              <div key={column.id}>
-                <label htmlFor={column.id}>{column.render("Header")}: </label>
-                {column.render("Filter")}
-              </div>
-            ) : null
-          )
-        )}
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {rows.map((row, i) => {
+              prepareRow(row);
+              return (
+                <tr {...row.getRowProps()}>
+                  {row.cells.map((cell) => {
+                    return (
+                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <span className="ml-5">
+          {headerGroups.map((headerGroup) =>
+            headerGroup.headers.map((column) =>
+              column.Filter ? (
+                <div key={column.id}>
+                  <label htmlFor={column.id}>{column.render("Header")} </label>
+                  {column.render("Filter")}
+                </div>
+              ) : null
+            )
+          )}
+          <pre>
+            <code>{JSON.stringify(state, null, 2)}</code>
+          </pre>
+        </span>
       </span>
-      <pre>
-        <code>{JSON.stringify(state, null, 2)}</code>
-      </pre>
-    </span>
+    </>
   );
 };
 
