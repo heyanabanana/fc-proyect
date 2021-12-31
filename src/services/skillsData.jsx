@@ -19,4 +19,8 @@ export const skillsData = [
     id: 5,
     name: "REACT",
   },
+  {
+    id: 6,
+    name: "HTML&CSS",
+  },
 ];
