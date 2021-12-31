@@ -1,5 +1,5 @@
 import React from "react";
-import { classNames } from "../../utils/ClassNames";
+import { classNames } from "./ClassNames";
 
 export function Button({ children, className, ...rest }) {
   return (

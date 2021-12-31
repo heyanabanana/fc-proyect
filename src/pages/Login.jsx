@@ -1,8 +1,8 @@
 import React from "react";
 import Loginform from "../components/LoginForm";
 import LoginImage from "../assets/images/login-image.jpg";
-import Title from "../components/pure/Title";
-import Footer from "../components/pure/Footer";
+import Title from "../components/templates/Title";
+import Footer from "../components/templates/Footer";
 
 const Login = () => {
   return (

@@ -1,23 +1,17 @@
 import React from "react";
-import Table, {
-  TagPill,
-  SelectFilter,
-  RemoteFilter,
-  MobilityFilter,
-  TagFilter,
-  FullName,
-  dontShow,
-} from "./pure/Table";
+// import Table, {
+//   SelectFilter,
+//   RemoteFilter,
+//   MobilityFilter,
+//   TagFilter,
+// } from "./Table";
+import Table from "./Table";
+import { TagPill, dontShow, FullName } from "./templates/TableTemplates";
 import { candidatesData } from "../services/candidatesData";
 
 const Candidatetable = () => {
   const columns = React.useMemo(
     () => [
-      {
-        accessor: "remote",
-        Filter: RemoteFilter,
-        Cell: dontShow,
-      },
       {
         Header: "Nombre",
         accessor: "fullname",
@@ -27,13 +21,13 @@ const Candidatetable = () => {
       {
         Header: "Ciudad",
         accessor: "city",
-        Filter: SelectFilter,
+        // Filter: SelectFilter,
         isSortable: true,
       },
       {
         Header: "País",
         accessor: "country",
-        Filter: SelectFilter,
+        // Filter: SelectFilter,
         isSortable: true,
       },
       {
@@ -51,12 +45,17 @@ const Candidatetable = () => {
         id: (data) => data.skills.map((skill) => skill.id),
         accessor: (data) => data.skills.map((skill) => skill.name),
         Cell: TagPill,
-        Filter: TagFilter,
+        // Filter: TagFilter,
         isSortable: true,
       },
       {
+        accessor: "remote",
+        // Filter: RemoteFilter,
+        Cell: dontShow,
+      },
+      {
         accessor: "mobility",
-        Filter: MobilityFilter,
+        // Filter: MobilityFilter,
         Cell: dontShow,
       },
     ],
