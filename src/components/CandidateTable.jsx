@@ -64,13 +64,7 @@ const Candidatetable = () => {
   );
 
   const data = React.useMemo(() => candidatesData, []);
-  return (
-    <>
-      <div className="flex w-full items-evenly">
-        <Table columns={columns} data={data} />
-      </div>
-    </>
-  );
+  return <Table columns={columns} data={data} />;
 };
 
 export default Candidatetable;

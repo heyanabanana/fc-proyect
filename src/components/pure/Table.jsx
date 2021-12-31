@@ -11,6 +11,13 @@ import {
 import { ReactComponent as IconSort } from "../../assets/icons/Filter.svg";
 import { ReactComponent as IconSearch } from "../../assets/icons/Search.svg";
 import { MultiSelect } from "primereact/multiselect";
+import {
+  ChevronDoubleLeftIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronDoubleRightIcon,
+} from "@heroicons/react/solid";
+import { Button, PageButton } from "./ButtonPage";
 
 export function TagPill({ value }) {
   return (
@@ -263,103 +270,141 @@ const Table = ({ columns, data }) => {
   );
 
   return (
-    <span className="w-full">
-      {" "}
-      <span className="flex mb-3 items-center align-left">
-        <h1 className="font-semibold mr-6">Alumnos</h1>
-        <GlobalFilter
-          preGlobalFilteredRows={preGlobalFilteredRows}
-          globalFilter={pageIndex.globalFilter}
-          setGlobalFilter={setGlobalFilter}
-        />
-      </span>
-      <span className="flex w-full items-between">
-        <span className="bg-white overflow-hidden border border-gray-medium sm:rounded-xl">
-          <table
-            className="min-w-full divide-y divide-gray-medium"
-            {...getTableProps()}
-          >
-            <thead className="w-full">
-              {headerGroups.map((headerGroup) => (
-                <tr
-                  {...headerGroup.getHeaderGroupProps()}
-                  className="items-center"
-                >
-                  {headerGroup.headers.map((column) => (
-                    <th
-                      className="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wider"
-                      {...column.getHeaderProps(column.getSortByToggleProps())}
-                    >
-                      <span className="flex items-center">
-                        {column.render("Header")}
-                        {column.isSortable ? <IconSort /> : ""}
-                      </span>
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody
-              {...getTableBodyProps()}
-              className="bg-white divide-y divide-gray-200 text-sm"
-            >
-              {page.map((row, i) => {
-                prepareRow(row);
-                return (
-                  <tr {...row.getRowProps()}>
-                    {row.cells.map((cell) => {
-                      return (
-                        <td
-                          {...cell.getCellProps()}
-                          className="px-4 py-3 whitespace-nowrap"
-                        >
-                          {cell.render("Cell")}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          <div className="pagination">
-            <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-              {"<<"}
-            </button>
-            <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-              {"<"}
-            </button>
-            <button onClick={() => nextPage()} disabled={!canNextPage}>
-              {">"}
-            </button>
-            <button
-              onClick={() => gotoPage(pageCount - 1)}
-              disabled={!canNextPage}
-            >
-              {">>"}
-            </button>
-            <span>
-              Page
-              <strong>
-                {pageIndex + 1} of {pageOptions.length}
-              </strong>{" "}
+    <span className="bg-gray-light h-screen w-screen">
+      <span className="flex flex-col lg:flex-row  bg-gray-light">
+        <span className="flex flex-col justify-start pl-10 ">
+          <span className="flex mb-3 items-center justify-between">
+            <span className="flex items-center">
+              <h1 className="font-semibold mr-6">Alumnos</h1>
+              <GlobalFilter
+                preGlobalFilteredRows={preGlobalFilteredRows}
+                globalFilter={pageIndex.globalFilter}
+                setGlobalFilter={setGlobalFilter}
+              />{" "}
             </span>
-
-            <select
-              value={pageSize}
-              onChange={(e) => {
-                setPageSize(Number(e.target.value));
-              }}
+            <button className="bg-white font-semibold px-4 py-2 rounded-lg border border-gray-medium">
+              Añadir alumno
+            </button>
+          </span>
+          <span className=" bg-white overflow-x-auto overflow-hidden border border-gray-medium sm:rounded-xl">
+            <table
+              className="w-full divide-y divide-gray-medium "
+              {...getTableProps()}
             >
-              {[5, 10, 20].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
-                </option>
-              ))}
-            </select>
-          </div>
+              <thead className="w-fit bg-white">
+                {headerGroups.map((headerGroup) => (
+                  <tr
+                    {...headerGroup.getHeaderGroupProps()}
+                    className="items-center"
+                  >
+                    {headerGroup.headers.map((column) => (
+                      <th
+                        className="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wider"
+                        {...column.getHeaderProps(
+                          column.getSortByToggleProps()
+                        )}
+                      >
+                        <span className="flex items-center">
+                          {column.render("Header")}
+                          {column.isSortable ? <IconSort /> : ""}
+                        </span>
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody
+                {...getTableBodyProps()}
+                className="bg-white divide-y divide-gray-200 text-sm"
+              >
+                {page.map((row, i) => {
+                  prepareRow(row);
+                  return (
+                    <tr {...row.getRowProps()}>
+                      {row.cells.map((cell) => {
+                        return (
+                          <td
+                            {...cell.getCellProps()}
+                            className="px-4 py-3 whitespace-nowrap"
+                          >
+                            {cell.render("Cell")}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            <div className="flex-1 flex justify-between sm:hidden px-6 py-3">
+              <Button
+                onClick={() => previousPage()}
+                disabled={!canPreviousPage}
+              >
+                Previous
+              </Button>
+              <Button onClick={() => nextPage()} disabled={!canNextPage}>
+                Next
+              </Button>
+            </div>
+            <div className="hidden pagination w-full md:flex flex justify-between px-6 py-3">
+              <span>
+                <span>
+                  Page
+                  <strong>
+                    {pageIndex + 1} of {pageOptions.length}
+                  </strong>{" "}
+                </span>
+
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                  }}
+                >
+                  {[5, 10, 20].map((pageSize) => (
+                    <option key={pageSize} value={pageSize}>
+                      Show {pageSize}
+                    </option>
+                  ))}
+                </select>
+              </span>
+              <span>
+                <PageButton
+                  onClick={() => gotoPage(0)}
+                  disabled={!canPreviousPage}
+                >
+                  <ChevronDoubleLeftIcon
+                    className="h-5 w-5"
+                    aria-hidden="true"
+                  />
+                </PageButton>
+                <PageButton
+                  onClick={() => previousPage()}
+                  disabled={!canPreviousPage}
+                >
+                  <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+                </PageButton>
+                <PageButton onClick={() => nextPage()} disabled={!canNextPage}>
+                  <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                </PageButton>
+                <PageButton
+                  onClick={() => gotoPage(pageCount - 1)}
+                  disabled={!canNextPage}
+                >
+                  <ChevronDoubleRightIcon
+                    className="h-5 w-5"
+                    aria-hidden="true"
+                  />
+                </PageButton>
+              </span>
+            </div>
+          </span>
         </span>
-        <span className="ml-5">
+        <span className="mx-10 md:ml-6 bg-white h-fit px-6 pb-5 rounded-xl border border-gray-medium w-fit">
+          <span className="flex justify-between items-center">
+            <h2>Filtros de Busqueda</h2>X
+          </span>
           {headerGroups.map((headerGroup) =>
             headerGroup.headers.map((column) =>
               column.Filter ? (
