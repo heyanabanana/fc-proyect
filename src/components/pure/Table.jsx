@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { skillsData } from "../../services/skillsData";
 import {
   useTable,
@@ -10,6 +10,7 @@ import {
 } from "react-table";
 import { ReactComponent as IconSort } from "../../assets/icons/Filter.svg";
 import { ReactComponent as IconSearch } from "../../assets/icons/Search.svg";
+import { MultiSelect } from "primereact/multiselect";
 
 export function TagPill({ value }) {
   return (
@@ -77,7 +78,7 @@ export function TagFilter({
   column: { filterValue, setFilter, preFilteredRows, id },
 }) {
   const [selectedSkills, setSelectedSkills] = React.useState([]);
-
+  filterValue = [];
   const deleteSkill = (i) => {
     const index = selectedSkills.indexOf(i);
     if (index > -1) {
@@ -87,37 +88,16 @@ export function TagFilter({
     setFilter(selectedSkills);
   };
 
-  const onChange = (event) => {
-    const skills = skillsData.map((item) => item.name);
-    if (skills.includes(event.target.value)) {
-      if (selectedSkills.includes(event.target.value) === false) {
-        setSelectedSkills((selectedSkills) => [
-          ...selectedSkills,
-          event.target.value || undefined,
-        ]);
-        setFilter((filterValue) => [
-          ...filterValue,
-          event.target.value || undefined,
-        ]);
-      }
-    }
-  };
-
   return (
     <>
-      {" "}
-      <input
-        type="input"
-        list="skillfilter"
-        onChange={onChange}
-        placeholder="Select an option"
-        multiple
+      <MultiSelect
+        value={selectedSkills}
+        options={skillsData.map((item) => item.name)}
+        onChange={(e) => {
+          setSelectedSkills(e.value);
+          setFilter(e.value);
+        }}
       />
-      <datalist id="skillfilter" multiple>
-        {skillsData.map((item) => (
-          <option key={item.id} value={item.name} />
-        ))}
-      </datalist>
       <span>
         {selectedSkills.map((skill, i) => (
           <button
@@ -154,7 +134,7 @@ export function SelectFilter({
       id={id}
       value={filterValue}
       onChange={(e) => {
-        setFilter(e);
+        setFilter(e.target.value);
       }}
     >
       <option value="">Todos</option>
