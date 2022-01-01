@@ -2,6 +2,7 @@ import React from "react";
 import { Route } from "wouter";
 import Login from "./pages/Login";
 import UserDashboard from "./pages/UserDashboard";
+import CandidateForm from "./pages/CandidateForm";
 
 // CSS styles
 import "./styles/App.css";
@@ -14,6 +15,7 @@ const App = () => {
     <div className="App">
       <Route path="/" component={Login} />
       <Route path="/dashboard" component={UserDashboard} />
+      <Route path="/newcandidate" component={CandidateForm} />
     </div>
   );
 };

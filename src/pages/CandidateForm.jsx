@@ -6,6 +6,8 @@ import {
   TrashIcon,
 } from "@heroicons/react/outline";
 import { skillsData } from "../services/skillsData";
+import "../styles/dataListInput.css";
+import { XIcon } from "@heroicons/react/outline";
 
 const candidateFake = {
   avatar:
@@ -20,18 +22,17 @@ export const DataList = ({ myValues }) => {
   // selectedItem
   const [item, setItem] = useState();
 
-  const [selectedSkills, setSelectedSkills] = useState({});
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  const onSelect = (selectedItem) => {
+    const i = selectedItem.label;
+    // selectedSkills.push(selectedItem.label);
 
-  /**
-   * your callback function gets called if the user selects one option out of the drop down menu
-   * @param selectedItem object (the selected item / option)
-   */
-  const onSelect = useCallback((selectedItem) => {
-    console.log(selectedItem);
-    setSelectedSkills((selectedSkills) => {
-      selectedItem;
-    });
-  }, []);
+    if (selectedSkills.includes(i) === false) {
+      //   selectedSkills.push(i);
+      setSelectedSkills((selectedSkills) => [...selectedSkills, i]);
+      console.log(selectedSkills);
+    } else console.log("ya existe");
+  };
 
   const items = useMemo(
     () =>
@@ -42,17 +43,47 @@ export const DataList = ({ myValues }) => {
     [myValues]
   );
 
+  const deleteSkill = (i) => {
+    const index = selectedSkills.indexOf(i);
+    if (index > -1) {
+      selectedSkills.splice(index, 1);
+    }
+    setSelectedSkills(selectedSkills);
+  };
+
   return (
-    <>
-      <DataListInput
-        placeholder="Select an option from the drop down menu..."
-        items={items}
-        onSelect={onSelect}
-      />{" "}
-      <span>
-        {selectedSkills && selectedSkills.map((skill) => <span>{skill}</span>)}
+    <span className="mt-5 ">
+      <label className="font-semibold mt-3" htmlFor="fullname">
+        Etiquetas
+      </label>
+      <span className="mb-1 ">
+        <DataListInput
+          placeholder="Escribe para buscar...."
+          items={items}
+          onSelect={onSelect}
+          dropdownClassName="dropdownInput"
+          inputClassName="datalistInput"
+        />{" "}
       </span>
-    </>
+      <span className="mt-2 flex">
+        {selectedSkills.map((skill, i) => (
+          <span
+            className="mt-2 bg-gray-medium rounded-full px-3 py-1 text-sm font-semibold flex items-center w-fit"
+            key={skill}
+          >
+            <span>{skill}</span>{" "}
+            <button
+              className="text-gray-dark"
+              onClick={() => {
+                deleteSkill(skill);
+              }}
+            >
+              <XIcon className="w-4" />
+            </button>
+          </span>
+        ))}
+      </span>
+    </span>
   );
 };
 
@@ -73,7 +104,7 @@ export function RenderPDF(path) {
 const Candidateform = () => {
   return (
     <span className="bg-gray-light h-screen w-screen flex flex-col sm:flex-row p-10 justify-evenly">
-      <span className="w-full md:w-2/4 mr-0 md:mr-5  bg-white flex flex-col w-fit h-fit p-10 rounded-xl border border-gray-medium">
+      <span className="w-full md:w-2/4 mr-0 md:mr-5  bg-white flex flex-col w-fit  p-10 rounded-xl border border-gray-medium">
         <span className="flex flex-col md:flex-row">
           <img
             src={candidateFake.avatar}
@@ -90,7 +121,7 @@ const Candidateform = () => {
             </span>
           </span>
         </span>
-        <span className="flex flex-col mt-10">
+        <span className="flex flex-col mt-10 h-auto">
           <label className="font-semibold" htmlFor="fullname">
             Nombre y Apellido
           </label>
@@ -99,7 +130,7 @@ const Candidateform = () => {
             className="mt-3 bg-gray-light p-3 rounded-lg focus:outline-primary border-none "
             defaultValue="Nombre Alumno"
           />
-          <span className="flex justify-between mt-6">
+          <span className="flex justify-between mt-3">
             {" "}
             <span className="flex flex-col w-full mr-3">
               <label className="font-semibold" htmlFor="fullname">
@@ -107,7 +138,7 @@ const Candidateform = () => {
               </label>
               <input
                 type="text"
-                className="mt-3 bg-gray-light p-3 rounded-lg focus:outline-primary border-none "
+                className="mt-1 bg-gray-light p-3 rounded-lg focus:outline-primary border-none "
                 defaultValue="+34 654 85 52 48"
               />
             </span>
@@ -117,17 +148,17 @@ const Candidateform = () => {
               </label>
               <input
                 type="text"
-                className="mt-3 bg-gray-light p-3 rounded-lg focus:outline-primary border-none "
+                className="mt-1 bg-gray-light p-3 rounded-lg focus:outline-primary border-none "
                 defaultValue="hcliment@gmail.com"
               />
             </span>
           </span>{" "}
-          <span className="flex justify-between mt-6">
+          <span className="flex justify-between mt-3">
             <span className="flex flex-col w-full mr-3">
               <label className="font-semibold" htmlFor="fullname">
                 País
               </label>
-              <select className="mt-3 bg-gray-light p-3 rounded-lg focus:outline-primary border-none ">
+              <select className="mt-1 bg-gray-light p-3 rounded-lg focus:outline-primary border-none ">
                 <option>España</option>
                 <option>Lisboa</option>
                 <option>Italia</option>
@@ -137,19 +168,19 @@ const Candidateform = () => {
               <label className="font-semibold" htmlFor="fullname">
                 Ciudad
               </label>
-              <select className="mt-3 bg-gray-light p-3 rounded-lg focus:outline-primary border-none ">
+              <select className="mt-1 bg-gray-light p-3 rounded-lg focus:outline-primary border-none ">
                 <option>Valencia</option>
                 <option>Sevilla</option>
                 <option>Gijón</option>
               </select>
             </span>
           </span>
-          <span className="flex justify-between mt-6">
+          <span className="flex justify-between mt-3">
             <span className="flex flex-col w-full mr-3">
               <label className="font-semibold" htmlFor="fullname">
                 Traslado
               </label>
-              <select className="mt-3 bg-gray-light p-3 rounded-lg focus:outline-primary border-none ">
+              <select className="mt-1 bg-gray-light p-3 rounded-lg focus:outline-primary border-none ">
                 <option>Si</option>
                 <option>No</option>
               </select>
@@ -158,16 +189,16 @@ const Candidateform = () => {
               <label className="font-semibold" htmlFor="fullname">
                 Presencialidad
               </label>
-              <select className="mt-3 bg-gray-light p-3 rounded-lg focus:outline-primary border-none ">
+              <select className="mt-1 bg-gray-light p-3 rounded-lg focus:outline-primary border-none ">
                 <option>En remoto</option>
                 <option>Presencial</option>
               </select>
             </span>
           </span>
-          <label className="font-semibold mt-6" htmlFor="fullname">
+          <label className="font-semibold mt-3" htmlFor="fullname">
             Presencialidad
           </label>
-          <span class="mt-4">
+          <span class="mt-1">
             <button class=" cursor-pointer bg-gray-dark rounded-xl text-white font-semibold py-3 px-4 w-fit inline-flex items-center">
               <CloudUploadIcon className="w-5" />
               <span class="ml-2">Subir de nuevo</span>{" "}
@@ -182,7 +213,9 @@ const Candidateform = () => {
               <span class="ml-2">Borrar</span>{" "}
             </button>
           </span>
-          <DataList myValues={skillsData} />
+          <span className="mt-5">
+            <DataList myValues={skillsData} />
+          </span>
         </span>
       </span>
       <span className="w-full h-full pt-5 md:pt-0">

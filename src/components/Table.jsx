@@ -131,6 +131,7 @@ function GlobalFilter({
 //     </select>
 //   );
 // }
+
 // function setFilteredParams(filterArr, val) {
 //   // if (val === undefined) return undefined;
 //   if (filterArr.includes(val)) {
